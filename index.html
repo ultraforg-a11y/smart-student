@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="description" content="تطبيق إنتاجية الطلاب الذكي - Smart Student Productivity App">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" href="./icon-192.png">
+    <link rel="icon" type="image/png" href="./icon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Marhey:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>تطبيق الطالب الذكي</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <!-- App Shell Layout -->
+    <div class="app-container">
+        <!-- Header Section -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1 class="app-title">🎓 تطبيق الطالب الذكي</h1>
+                <button class="theme-toggle" id="themeToggle" aria-label="تبديل المظهر">
+    <svg class="icon icon-md theme-icon-sun" style="display: none;">
+        <use href="icons.svg#icon-sun"></use>
+    </svg>
+    <svg class="icon icon-md theme-icon-moon">
+        <use href="icons.svg#icon-moon"></use>
+    </svg>
+</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- Home Page -->
+            <section id="homePage" class="page active">
+                <div class="page-content">
+                    <!-- Welcome Header -->
+                    <div class="welcome-card card">
+                        <h2 class="greeting-text">أهلا بك، <span id="userNameDisplay">الطالب</span> 👋</h2>
+                        <p class="date-text" id="dateDisplay">-</p>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="stats-grid">
+                       <!-- Tasks Stat -->
+<div class="stat-card card">
+    <svg class="stat-icon icon icon-lg icon-primary">
+        <use href="icons.svg#icon-tasks"></use>
+    </svg>
+    <div class="stat-content">
+        <p class="stat-label">المهام</p>
+        <p class="stat-value" id="tasksCount">0</p>
+    </div>
+</div>
+
+<!-- Events Stat -->
+<div class="stat-card card">
+    <svg class="stat-icon icon icon-lg icon-secondary">
+        <use href="icons.svg#icon-events"></use>
+    </svg>
+    <div class="stat-content">
+        <p class="stat-label">الأحداث</p>
+        <p class="stat-value" id="eventsCount">0</p>
+    </div>
+</div>
+
+<!-- Completed Stat -->
+<div class="stat-card card">
+    <svg class="stat-icon icon icon-lg icon-success">
+        <use href="icons.svg#icon-check"></use>
+    </svg>
+    <div class="stat-content">
+        <p class="stat-label">مكتمل</p>
+        <p class="stat-value" id="completedCount">0</p>
+    </div>
+</div>
+
+                    <!-- Quick Actions -->
+                    <button class="action-btn card" data-action="tasks">
+    <svg class="action-icon icon icon-lg icon-primary">
+        <use href="icons.svg#icon-tasks"></use>
+    </svg>
+    <span>المهام</span>
+</button>
+<button class="action-btn card" data-action="events">
+    <svg class="action-icon icon icon-lg icon-secondary">
+        <use href="icons.svg#icon-events"></use>
+    </svg>
+    <span>الأحداث</span>
+</button>
+<button class="action-btn card" data-action="focus">
+    <svg class="action-icon icon icon-lg icon-warning">
+        <use href="icons.svg#icon-focus"></use>
+    </svg>
+    <span>تركيز</span>
+</button>
+<button class="action-btn card" data-action="subjects">
+    <svg class="action-icon icon icon-lg icon-info">
+        <use href="icons.svg#icon-subjects"></use>
+    </svg>
+    <span>المواد</span>
+</button>
+
+                    <!-- Today's Tasks Preview -->
+                    <div class="today-preview">
+                        <h3 class="section-title">مهام اليوم</h3>
+                        <div id="todayTasksList" class="tasks-preview-list">
+                            <div class="empty-state">
+    <svg class="empty-icon icon icon-3xl icon-muted">
+        <use href="icons.svg#icon-empty"></use>
+    </svg>
+    <p class="empty-text">لا توجد مهام</p>
+</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tasks Page -->
+            <section id="tasksPage" class="page">
+                <div class="page-content">
+                    <h2 class="page-title">📝 المهام</h2>
+                    
+                    <!-- Filter Tabs -->
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-filter="all">الجميع</button>
+                        <button class="filter-tab" data-filter="pending">قيد الانتظار</button>
+                        <button class="filter-tab" data-filter="completed">مكتمل</button>
+                    </div>
+
+                    <!-- Tasks List -->
+                    <div id="tasksList" class="tasks-list">
+                        <div class="empty-state">
+                            <p class="empty-icon">📭</p>
+                            <p class="empty-text">لا توجد مهام</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Add Task Modal -->
+            <div id="addTaskModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>إضافة مهمة جديدة</h3>
+                        <button class="modal-close" data-modal="addTaskModal">✕</button>
+                    </div>
+                    <form id="addTaskForm" class="form">
+                        <div class="form-group">
+                            <label for="taskTitle">عنوان المهمة</label>
+                            <input type="text" id="taskTitle" placeholder="أدخل عنوان المهمة" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskDate">التاريخ</label>
+                            <input type="date" id="taskDate" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">إضافة</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Events Page -->
+            <section id="eventsPage" class="page">
+                <div class="page-content">
+                    <h2 class="page-title">📅 الأحداث</h2>
+                    
+                    <!-- Date Filter -->
+                    <div class="date-filter">
+                        <input type="date" id="eventDateFilter">
+                    </div>
+
+                    <!-- Events List -->
+                    <div id="eventsList" class="events-list">
+                        <div class="empty-state">
+                            <p class="empty-icon">📭</p>
+                            <p class="empty-text">لا توجد أحداث</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Add Event Modal -->
+            <div id="addEventModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>إضافة حدث جديد</h3>
+                        <button class="modal-close" data-modal="addEventModal">✕</button>
+                    </div>
+                    <form id="addEventForm" class="form">
+                        <div class="form-group">
+                            <label for="eventTitle">عنوان الحدث</label>
+                            <input type="text" id="eventTitle" placeholder="أدخل عنوان الحدث" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventDate">التاريخ</label>
+                            <input type="date" id="eventDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventTime">الوقت</label>
+                            <input type="time" id="eventTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventCategory">الفئة</label>
+                            <select id="eventCategory" required>
+                                <option value="">اختر فئة</option>
+                                <option value="exam">امتحان</option>
+                                <option value="lecture">محاضرة</option>
+                                <option value="deadline">موعد نهائي</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">إضافة</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Focus Mode (Pomodoro) -->
+            <section id="focusPage" class="page">
+                <div class="page-content focus-content">
+                    <h2 class="page-title">⏱️ وضع التركيز</h2>
+                    
+                    <div class="focus-container">
+                        <!-- Timer Circle -->
+                        <div class="timer-circle">
+                            <svg class="timer-svg" viewBox="0 0 200 200">
+                                <circle class="timer-bg" cx="100" cy="100" r="90"></circle>
+                                <circle class="timer-progress" cx="100" cy="100" r="90"></circle>
+                            </svg>
+                            <div class="timer-display">
+                                <span id="timerValue">25:00</span>
+                            </div>
+                        </div>
+
+                        <!-- Timer Controls -->
+                        <div class="timer-controls">
+                            <button id="startTimer" class="btn btn-primary">ابدأ</button>
+                            <button id="pauseTimer" class="btn btn-secondary" disabled>إيقاف</button>
+                            <button id="resetTimer" class="btn btn-outline">إعادة تعيين</button>
+                        </div>
+
+                        <!-- Focus Info -->
+                        <div class="focus-info card">
+                            <p>💡 وضع التركيز (بومودورو) لمدة 25 دقيقة</p>
+                            <p>ركز على عمل واحد دون تشتيت</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Subjects Page -->
+            <section id="subjectsPage" class="page">
+                <div class="page-content">
+                    <h2 class="page-title">📚 المواد الدراسية</h2>
+                    
+                    <!-- Subjects List -->
+                    <div id="subjectsList" class="subjects-list">
+                        <div class="empty-state">
+                            <p class="empty-icon">📚</p>
+                            <p class="empty-text">لا توجد مواد</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Add Subject Modal -->
+            <div id="addSubjectModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>إضافة مادة جديدة</h3>
+                        <button class="modal-close" data-modal="addSubjectModal">✕</button>
+                    </div>
+                    <form id="addSubjectForm" class="form">
+                        <div class="form-group">
+                            <label for="subjectName">اسم المادة</label>
+                            <input type="text" id="subjectName" placeholder="مثال: الرياضيات" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subjectTotal">عدد الدروس</label>
+                            <input type="number" id="subjectTotal" placeholder="عدد الدروس الكلي" min="1" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">إضافة</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Trash Page -->
+                       <!-- More Page -->
+            <section id="morePage" class="page">
+                <div class="page-content">
+                    <h2 class="page-title">المزيد</h2>
+
+                    <!-- Settings Section -->
+                    <div class="more-section">
+                        <h3 class="more-section-title">⚙️ الإعدادات</h3>
+                        
+                        <!-- Notifications Setting -->
+                        <div class="setting-item">
+                            <div class="setting-header">
+                                <svg class="setting-icon icon icon-lg icon-primary">
+    <use href="icons.svg#icon-notification"></use>
+</svg>
+                                <div class="setting-info">
+                                    <h4>تفعيل الإشعارات</h4>
+                                    <p>تلقّ تذكيرات قبل 5 دقايق من كل مهمة</p>
+                                </div>
+                            </div>
+                            <button class="toggle-btn" id="notificationToggle" data-enabled="false">
+                                <span class="toggle-circle"></span>
+                            </button>
+                        </div>
+
+                        <!-- Theme Setting -->
+                        <div class="setting-item">
+                            <div class="setting-header">
+                                <span class="setting-icon">🎨</span>
+                                <div class="setting-info">
+                                    <h4>المظهر</h4>
+                                    <p>اختر بين المظهر الداكن والفاتح</p>
+                                </div>
+                            </div>
+                            <div class="theme-selector">
+                                <button class="theme-option" data-theme="dark" title="داكن">🌙</button>
+                                <button class="theme-option" data-theme="light" title="فاتح">☀️</button>
+                            </div>
+                        </div>
+
+                        <!-- Trash -->
+                        <div class="setting-item">
+                            <div class="setting-header">
+                                <span class="setting-icon">🗑️</span>
+                                <div class="setting-info">
+                                    <h4>سلة المحذوفات</h4>
+                                    <p><span id="trashCount">0</span> عناصر محذوفة</p>
+                                </div>
+                            </div>
+                            <button class="btn btn-danger" onclick="openTrashModal()">عرض</button>
+                        </div>
+
+                        <!-- Clear All Trash -->
+                        <button class="setting-item full-btn btn-danger" onclick="clearAllTrash()">
+                            <span class="setting-icon">⚠️</span>
+                            <span>افراغ السلة نهائياً</span>
+                        </button>
+                    </div>
+
+                    <!-- About Section -->
+                    <div class="more-section">
+                        <h3 class="more-section-title">ℹ️ عن التطبيق</h3>
+                        <div class="about-card card">
+                            <p class="about-title">📚 أهمية هذا التطبيق</p>
+                            <p class="about-text">
+                                تطبيق الطالب الذكي هو أداة شاملة مصممة خصيصاً لمساعدتك على تنظيم وقتك بكفاءة. 
+                                يوفر لك نظام إدارة مهام متقدم، وتتبع الأحداث الأكاديمية، وجلسات تركيز مستخدمة تقنية بومودورو، 
+                                وتتبع تقدمك في المواد الدراسية. كل هذا بدون الحاجة للإنترنت، مما يعني يمكنك استخدام التطبيق 
+                                في أي وقت وأي مكان. مصمم بواجهة عربية سهلة الاستخدام وجميلة تجعل تجربة الاستخدام ممتعة وفعّالة.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Our Other Works Section -->
+                    <div class="more-section">
+                        <h3 class="more-section-title">🚀 أعمالنا الأخرى</h3>
+                        <div class="works-grid">
+                            <a href="https://mahmoudalmohammad779-tech.github.io/best-ai" target="_blank" class="work-card card">
+                                <div class="work-icon">💼</div>
+                                <h4>هذا واحد من مشاريعي</h4>
+                                <p>صفحة ويب فيها اكثر من 200 اداة ذكاء اصطناعي مصممة لتسهيل اعمالك</p>
+                                <span class="external-icon">↗️</span>
+                            </a>
+                            <a href="https://mahmoudalmohammad779-tech.github.io/Tech-Watch-Store" target="_blank" class="work-card card">
+                                <div class="work-icon">📊</div>
+                                <h4>وهذا مشروع اخر</h4>
+                                <p>صفحة متجر الكتروني</p>
+                                <span class="external-icon">↗️</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Contact Section -->
+                    <div class="more-section">
+                        <h3 class="more-section-title">📞 تواصل معنا فوراً</h3>
+                        <button class="contact-btn" onclick="openWhatsApp()">
+                            <span class="contact-icon">💬</span>
+                            <div class="contact-info">
+                                <h4>WhatsApp</h4>
+                                <p>تحدث معنا مباشرة على الواتس أب</p>
+                            </div>
+                            <span class="arrow">→</span>
+                        </button>
+                    </div>
+
+                    <!-- Version Info -->
+                    <div class="more-section">
+                        <div class="version-info">
+                            <p>جميع الحقوق محفوظة للمبرمج محمود المحمد <strong></strong></p>
+                            <p>آخر تحديث: <strong id="lastUpdate">-</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trash Modal -->
+            <div id="trashModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>🗑️ سلة المحذوفات</h3>
+                        <button class="modal-close" onclick="closeTrashModal()">✕</button>
+                    </div>
+                    <div id="trashModalContent" class="trash-list">
+                        <div class="empty-state">
+                            <p class="empty-icon">✨</p>
+                            <p class="empty-text">السلة فارغة</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+       <nav class="bottom-nav">
+    <button class="nav-item active" data-page="homePage" title="الرئيسية">
+        <svg class="nav-icon icon icon-md">
+            <use href="icons.svg#icon-home"></use>
+        </svg>
+        <span class="nav-label">الرئيسية</span>
+    </button>
+    <button class="nav-item" data-page="tasksPage" title="المهام">
+        <svg class="nav-icon icon icon-md">
+            <use href="icons.svg#icon-tasks"></use>
+        </svg>
+        <span class="nav-label">المهام</span>
+    </button>
+    <button class="nav-item" data-page="focusPage" title="التركيز">
+        <svg class="nav-icon icon icon-md">
+            <use href="icons.svg#icon-focus"></use>
+        </svg>
+        <span class="nav-label">التركيز</span>
+    </button>
+    <button class="nav-item" data-page="eventsPage" title="الأحداث">
+        <svg class="nav-icon icon icon-md">
+            <use href="icons.svg#icon-events"></use>
+        </svg>
+        <span class="nav-label">الأحداث</span>
+    </button>
+    <button class="nav-item" data-page="subjectsPage" title="المواد">
+        <svg class="nav-icon icon icon-md">
+            <use href="icons.svg#icon-subjects"></use>
+        </svg>
+        <span class="nav-label">المواد</span>
+    </button>
+    <button class="nav-item" data-page="morePage" title="المزيد">
+        <svg class="nav-icon icon icon-md">
+            <use href="icons.svg#icon-more"></use>
+        </svg>
+        <span class="nav-label">المزيد</span>
+    </button>
+</nav>
+
+        <!-- Floating Action Button -->
+        <div class="fab-menu" id="fabMenu">
+            <button class="fab-main" id="fabMain">
+    <svg class="icon icon-lg" style="color: white;">
+        <use href="icons.svg#icon-add"></use>
+    </svg>
+</button>
+            <div class="fab-options">
+                <button class="fab-option" data-action="addTask" title="إضافة مهمة">
+                    <span>📝</span>
+                </button>
+                <button class="fab-option" data-action="addEvent" title="إضافة حدث">
+                    <span>📅</span>
+                </button>
+                <button class="fab-option" data-action="addSubject" title="إضافة مادة">
+                    <span>📚</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- WhatsApp Button -->
+        <a href="https://wa.me/96181557991?text=السلام%20عليكم%20ورحمة%20الله%20وبركاته%20،انا%20استخدم%20التطبيق%20المذهل%20(الطالب%20الذكي)%20واحتاج%20منك:" 
+           class="whatsapp-btn" target="_blank" rel="noopener noreferrer" 
+           title="تواصل عبر الواتس أب">
+
+
+    <script>
+        function openWhatsApp() {
+            // الرقم الخاص بك مدمج في الكود
+            const phoneNumber = "96181557991";
+            const message = "مرحباً، أود التواصل معك";
+            
+            const encodedMessage = encodeURIComponent(message);
+            
+            // فحص نوع الجهاز
+            const isMobile = /iPhone|Android|iPad/i.test(navigator.userAgent);
+
+            if (isMobile) {
+                // إذا كان موبايل يفتح التطبيق فوراً
+                window.location.href = "whatsapp://send?phone=" + phoneNumber + "&text=" + encodedMessage;
+            } else {
+                // إذا كان كمبيوتر يفتح الرابط العالمي (الذي يوجه للتطبيق أو الويب)
+                window.open("https://wa.me/" + phoneNumber + "?text=" + encodedMessage, '_blank');
+            }
+        }
+    </script>
+            <span>💬</span>
+        </a>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast"></div>
+
+        <!-- Confirmation Dialog -->
+        <div id="confirmDialog" class="modal">
+            <div class="modal-content modal-sm">
+                <div class="modal-header">
+                    <h3 id="confirmTitle">تأكيد</h3>
+                </div>
+                <p id="confirmMessage"></p>
+                <div class="modal-actions">
+                    <button id="confirmCancel" class="btn btn-outline">إلغاء</button>
+                    <button id="confirmOk" class="btn btn-primary">تأكيد</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Setup Modal (First Launch) -->
+        <div id="setupModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>مرحبا بك 👋</h3>
+                </div>
+                <p class="setup-subtitle">دعنا نبدأ بإعداد حسابك</p>
+                <form id="setupForm" class="form">
+                    <div class="form-group">
+                        <label for="setupUsername">اسمك</label>
+                        <input type="text" id="setupUsername" placeholder="أدخل اسمك" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">ابدأ الآن</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+    
+    <!-- PWA Registration -->
+   <script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('✅ Service Worker Registered'))
+      .catch(err => console.log('❌ SW Error:', err));
+  });
+}
+</script>
+</body>
+</html>
